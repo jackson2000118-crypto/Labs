@@ -86,6 +86,7 @@ The first two lines are high because those functions are not implemented yet, so
 
 > Discussion: What does each value represent out of Collisions, Highest, Average Length > 1, Filled Spots, and Load. Make sure to discuss together what is the ideal load balance num.
 
+"Collisions: 1000" means that all the data points were stored in one location. This lines up with "Filled Spots: 1" which means if only one spot was used all data points collided and were stored in that spot. This also lines up with load becuase if only one spot was taken the load would be close to 0. As the hash table fills up the load moves closer to 1.
 
 ## 👉🏽 **Task**: Write Simple Hash
 
@@ -93,6 +94,9 @@ Using your notes from the class videos or on your own, write a simple hash that 
 just add the values of those characters.
 
 > Discussion: How effective is the "simple hash" compared to the other
+
+Simple hash is ineffective for adtasets with similarly structured strings. The other three algorithmss distribute keys far more evenly because they incorporate positional information through multiplication, bit shifts, and XOR operations.
+
 two hashes that are implemented - for this particular dataset"? 
 
 
@@ -113,6 +117,11 @@ We encourage you to look at a more efficient implementation than using multiplic
 > Second: What is a more efficient implementation? Do you think they picked 33 for this reason? 
 > Why would this matter? (reflect back to your assembly team activity). 
 
+Djb2 preformes very similarly to fnv_hash and jenkin_one_at_a_time_hash and much better than the simple_hash which only used cumulative ascii values. Multiplying by 33 is essentially moving the value over by 5 bits. Doing this via multiplication is more work on the compiler and is made simpler by directly using a bitwise operator >> 5 which directly moves the bits.
+
+The magic number 33(why it work better than other constants , prime or not) have never been explain.
+
+Since the hash function run this line for every single char in every string, and processing large datas like 100,000 entries, this differece adds up significantly. That's why it metters.
 ## Tests
 
 Look at the file, and run various tests.
@@ -125,8 +134,13 @@ Look at the file, and run various tests.
   * Do the ones that perform better come at an increased cost?
 * Would prime numbers be useful staring points?
 
+After testing with different sizes, we found that decreasing size causes an increase in collisions. However, increasing the size past a certian point (which we found to be around 1000000) did not have any effect on decreasing collisions. This highlights that while too small of a size can cause increased collisions when the size is big enough to keep the load within standard the quality of the hashing function is what will keep the collisions low. For the files with 1000 options it seems that somewhere between 100000 and 1000000 offer the best space to load balance. While all except simple_hash are fairly matched fnv_hash seems to come out on top in several of our runs. 
+
+
+
 If you don't recall what some operators do - look them up! Discuss them (particular the XOR and the shifts). Why would these be useful? 
 As a reminder, hash algorithms care more about the binary bits, which thinking about it in a form of binary may help better understand why they may use those. 
+ XOR (exclusive or) works well, however it is order-insensitive on its own,  anagrams like  produce the same hash value and cause collisions. Shift operators fix this problem — a left shift (<<) pushes bits toward the most significant end while a right shift (>>) pushes bits toward the least significant end, and by shifting the current hash before XORing in the next character, the position of each character in the input affects the result. Together, XOR and shifts achieve order sensitivity, where the position of each bit influences the output, and the avalanche effect, where a small change in input causes a large change in output, spreading keys evenly across the table and minimizing collisions.
 
 For example, take 5 in binary (101) and apply the operations to that small value, to get a better idea of the transformations that are happening. You can always either write a small see program, or perform the same operations in the python interactive interrupter to see what is going on! 
 
@@ -146,8 +160,14 @@ You will never find a perfect hash, and there is often a cost of performance the
 For object oriented languages such as Java, those are built into the objects themselves to determine their hash. 
 
 > Discussion: 
-> Discuss a hash table design. See if you can explain to each other how it is designed, and why it is effectively $O(1)$.  
+> Discuss a hash table design. See if you can explain to each other how it is designed, and why it is effectively $O(1)$. 
+Hash table have 3 main part 
+1. Array of fixed size. 
+2. Hash function that converts a key into an index.
+3. Collision handling method.
+And it run the key through the hash function, So no matter how large data, finding the index is always just one hash computation + one array lookup.
 > Can you also generate a case where access/insert/delete are $O(n)$?
+When SIZE is too small relative to the number of entries, the load factor becomes too high, forcing many keys into the same bucket. Instead of a quick single-step lookup, you have to scan through every item in that bucket one by one — making it O(n).
 
 ## Leet Code Practice
 Take time practicing some of the past modules leet code. While you may not have time for everyone to do this, have a couple people practice "live coding". Live coding is a skill in interviews were you are asked to describe code **while** you are writing it. It can be a challenging skill, and it takes practice. I recommend that you setup a rotation of people to practice this skill within your team, ideally a couple every week. The other teams members can offer support, and then do a code review after a solution is generated. Discuss pros/cons of the leet code solution as well as other potential ways to solve the problem.

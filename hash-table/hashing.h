@@ -14,9 +14,12 @@
  * return that sum as the hash 
 */
 uint32_t simple_hash(char *key) {
-   
-
-    return 0;
+   uint32_t hash = 0;
+   int c;
+   while((c = *key++)){
+    hash += c;
+   }
+    return hash;
 }
 
 /**
@@ -26,8 +29,12 @@ uint32_t simple_hash(char *key) {
  * return hash
 */
 uint32_t djb2(char *key) {
-    
-    return 0;
+    uint32_t hash = DJB2_PRIME;
+    int c;
+    while((c = *key++)){
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
 }
 
 uint32_t fnv_hash(char *key)

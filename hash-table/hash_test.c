@@ -5,7 +5,7 @@
 #include "hashing.h"
 
 #define ALGO_SIZE 4 /* make sure to change this if you add hash algos to hash[]*/
-#define SIZE 1000000 /* change this around to mess with load / array size - we suggest 1 and other sizes */
+#define SIZE 100000 /* change this around to mess with load / array size - we suggest 1 and other sizes */
 
 
 
